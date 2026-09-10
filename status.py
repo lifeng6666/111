@@ -158,9 +158,9 @@ def send_post_request(driver, url, body_dict, extra_headers=None):
     var callback = arguments[3];
 
     // 清除残留的 signature cookie，避免服务端签名校验失败 (code=29003 获取秘钥信息为空)
-    document.cookie = 'signature=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + window.location.hostname;
-    document.cookie = 'signature=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.' + window.location.hostname.split('.').slice(-2).join('.');
-    document.cookie = 'signature=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    // document.cookie = 'signature=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + window.location.hostname;
+    // document.cookie = 'signature=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.' + window.location.hostname.split('.').slice(-2).join('.');
+    // document.cookie = 'signature=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 
     var headersObj = {
         'Content-Type': 'application/json',
@@ -335,6 +335,7 @@ def perform_init_session(driver, max_retries=3):
 
 
 def login_with_password(driver, username, password, captcha_ticket):
+    print(f"captchaTicket: {captcha_ticket}")
     """登录发包"""
     url = "https://passport.jlc.com/api/cas/login/with-password"
     try:
@@ -344,10 +345,10 @@ def login_with_password(driver, username, password, captcha_ticket):
         log(f"❌ SM2加密失败: {e}")
         return 'other_error', None
 
-    body = {'username': encrypted_username, 'password': encrypted_password, 'isAutoLogin': False, 'captchaTicket': captcha_ticket}
+    body = {'username': encrypted_username, 'password': encrypted_password, 'isAutoLogin': False}
     log(f"📡 发送登录请求...")
     response = send_post_request(driver, url, body)
-
+    
     if not response or not isinstance(response, dict):
         log(f"❌ 登录响应为空或非字典: {response!r}")
         return 'other_error', response
