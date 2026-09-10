@@ -345,7 +345,7 @@ def login_with_password(driver, username, password, captcha_ticket):
         log(f"❌ SM2加密失败: {e}")
         return 'other_error', None
 
-    body = {'username': encrypted_username, 'password': encrypted_password, 'isAutoLogin': False}
+    body = {'username': encrypted_username, 'password': encrypted_password, 'isAutoLogin': False, 'captchaTicket': captcha_ticket}
     log(f"📡 发送登录请求...")
     response = send_post_request(driver, url, body)
     
@@ -354,7 +354,7 @@ def login_with_password(driver, username, password, captcha_ticket):
         return 'other_error', response
     if response.get('success') == True and response.get('code') == 2017: return 'success', response
     if response.get('code') == 10208: return 'password_error', response
-    log(f"❌ 登录失败 - code={response.get('code')}, msg={response.get('message') or response.get('msg')}, success={response.get('success')}, captchaTicket长度={len(captcha_ticket) if captcha_ticket else 0}")
+    log(f"❌ 登录失败 - {response!r}")
     return 'other_error', response
 
 
