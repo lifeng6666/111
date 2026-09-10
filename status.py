@@ -157,6 +157,11 @@ def send_post_request(driver, url, body_dict, extra_headers=None):
     var extraHeaders = JSON.parse(arguments[2]);
     var callback = arguments[3];
 
+    // 清除残留的 signature cookie，避免服务端签名校验失败 (code=29003 获取秘钥信息为空)
+    document.cookie = 'signature=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + window.location.hostname;
+    document.cookie = 'signature=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.' + window.location.hostname.split('.').slice(-2).join('.');
+    document.cookie = 'signature=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+
     var headersObj = {
         'Content-Type': 'application/json',
         'Accept': 'application/json, text/plain, */*'
